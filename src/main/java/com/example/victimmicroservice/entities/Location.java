@@ -3,6 +3,9 @@ package com.example.victimmicroservice.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+import java.util.UUID;
+
 @Setter
 @Getter
 @AllArgsConstructor
@@ -11,9 +14,9 @@ import lombok.*;
 @Entity
 public class Location {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
 
-    private  long id;
+    private UUID id;
     private String City;
     private  String Street;
     private  String Address;
@@ -21,5 +24,7 @@ public class Location {
     @ManyToOne
     @JoinColumn(name = "assistance_request_id")
     private AssistantRequests assistanceRequest;
+    @OneToMany(mappedBy = "location")
+    private Set<AssistantRequests> assistanceRequests;
 
 }

@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -19,8 +20,8 @@ import java.util.UUID;
 public class AssistantRequests {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
     private String Description;
     // I use enumeration for attribute state(IN_PROGRESS/COMPLETED)
     @Enumerated(EnumType.STRING)
@@ -31,12 +32,17 @@ public class AssistantRequests {
     private UUID userId;
 
     //Relationship
-    @OneToMany(mappedBy = "assistanceRequest", cascade = CascadeType.ALL)
-    private List<Location> locations;
-    @OneToMany(mappedBy = "assistanceRequest", cascade = CascadeType.ALL)
-    private List<Skills> skills;
-    @OneToMany(mappedBy = "assistanceRequest", cascade = CascadeType.ALL)
-    private List<AidType> aidTypes;
+
+
+    @ManyToMany(mappedBy = "assistancerequest", cascade = CascadeType.ALL)
+    private Set<Skills> skills;
+    @ManyToMany(mappedBy = "assistancerequest", cascade = CascadeType.ALL)
+    private Set<AidType> aidType;
+
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
+
 
 
 

@@ -4,6 +4,9 @@ package com.example.victimmicroservice.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+import java.util.UUID;
+
 @Setter
 @Getter
 @AllArgsConstructor
@@ -12,13 +15,13 @@ import lombok.*;
 @Entity
 public class AidType {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    @Column(nullable = false)
     private String  name;
 
     //Relationship
-    @ManyToOne
-    @JoinColumn(name = "assistance_request_id")
-    private AssistantRequests assistanceRequest;
-
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "assistance_request_aid_type", joinColumns = @JoinColumn(name = "aid_type_id"), inverseJoinColumns = @JoinColumn(name = "assistance_request_id"))
+    private Set<AssistantRequests> assistancerequest;
 }
