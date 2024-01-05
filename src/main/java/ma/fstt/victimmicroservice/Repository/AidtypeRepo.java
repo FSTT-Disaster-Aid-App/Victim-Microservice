@@ -1,6 +1,6 @@
-package com.example.victimmicroservice.Repository;
+package ma.fstt.victimmicroservice.Repository;
 
-import com.example.victimmicroservice.entities.AidType;
+import ma.fstt.victimmicroservice.entities.AidType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
