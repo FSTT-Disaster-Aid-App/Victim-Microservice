@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/victim/skills")
+@RequestMapping("/victim/skills")
 public class SkillsController {
 	@Autowired
 	private SkillsRepo skillsRepository;

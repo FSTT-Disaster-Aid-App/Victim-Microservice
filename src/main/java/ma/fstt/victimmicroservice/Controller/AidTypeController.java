@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/victim/aidtypes")
+@RequestMapping("/victim/aidtypes")
 public class AidTypeController {
 	@Autowired
 	private AidtypeRepo aidTypeRepository;

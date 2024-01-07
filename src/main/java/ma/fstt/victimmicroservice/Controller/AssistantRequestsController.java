@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/victim/AssistantRequests")
+@RequestMapping("/victim/AssistantRequests")
 public class AssistantRequestsController {
 
 	@Autowired

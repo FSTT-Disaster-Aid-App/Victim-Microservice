@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/victim/Locations")
+@RequestMapping("/victim/Locations")
 public class LocationController {
 
 	@Autowired
