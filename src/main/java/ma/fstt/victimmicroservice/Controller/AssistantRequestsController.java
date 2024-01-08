@@ -1,33 +1,79 @@
 package ma.fstt.victimmicroservice.Controller;
 
+import ma.fstt.victimmicroservice.Repository.AidtypeRepo;
 import ma.fstt.victimmicroservice.Repository.AssistantRequestsrepo;
-
+import ma.fstt.victimmicroservice.Repository.Locationrepo;
+import ma.fstt.victimmicroservice.Repository.SkillsRepo;
+import ma.fstt.victimmicroservice.entities.AidType;
 import ma.fstt.victimmicroservice.entities.AssistantRequests;
-import jakarta.annotation.Resource;
+import ma.fstt.victimmicroservice.entities.Location;
+import ma.fstt.victimmicroservice.entities.Skills;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/victim/AssistantRequests")
 public class AssistantRequestsController {
-
 	@Autowired
 	private AssistantRequestsrepo assistantrequestsrepo;
+	@Autowired
+	private SkillsRepo skillsrepo;
+	@Autowired
+	private AidtypeRepo aidtyperepo;
+	@Autowired
+	private Locationrepo locationrepo;
 
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> createAssistanceOffer(@RequestBody AssistantRequests assistanceOffer) {
 		try {
-			AssistantRequests savedAssistanceORequest = assistantrequestsrepo.save(assistanceOffer);
-			return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("data", savedAssistanceORequest));
+			// Save Location entity
+			Location location = assistanceOffer.getLocation();
+			locationrepo.save(location);
+
+			// Save the AssistantRequests entity
+			AssistantRequests savedAssistanceRequest = assistantrequestsrepo.save(assistanceOffer);
+
+			// Set the association in Skills and save
+			Set<Skills> skills = savedAssistanceRequest.getSkills();
+			skills.forEach(skill -> {
+				Set<AssistantRequests> assistanceRequestsSet = new HashSet<>();
+				assistanceRequestsSet.add(savedAssistanceRequest);
+				skill.setAssistancerequest(assistanceRequestsSet);
+			});
+
+			// Set the association in AidType and save
+			Set<AidType> aidTypes = savedAssistanceRequest.getAidType();
+			aidTypes.forEach(aidType -> {
+				Set<AssistantRequests> assistanceRequestsSet = new HashSet<>();
+				assistanceRequestsSet.add(savedAssistanceRequest);
+				aidType.setAssistancerequest(assistanceRequestsSet);
+			});
+
+			// Save all Skills entities
+			skillsrepo.saveAll(skills);
+
+			// Save all AidType entities
+			aidtyperepo.saveAll(aidTypes);
+
+			// Build the response map
+			Map<String, Object> responseMap = new HashMap<>();
+			responseMap.put("data", savedAssistanceRequest);
+
+			return ResponseEntity.status(HttpStatus.CREATED).body(responseMap);
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(Map.of("error", "Error while processing the request"));
+			// Handle the exception and provide an error response
+			Map<String, Object> errorMap = new HashMap<>();
+			errorMap.put("error", e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMap);
 		}
 	}
 

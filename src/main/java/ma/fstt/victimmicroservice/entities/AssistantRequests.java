@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
-@Setter
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -38,5 +36,69 @@ public class AssistantRequests {
 	@ManyToOne
 	@JoinColumn(name = "location_id")
 	private Location location;
+
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+	public String getDescription() {
+		return Description;
+	}
+
+	public void setDescription(String description) {
+		Description = description;
+	}
+
+	public AssistantState getState() {
+		return state;
+	}
+
+	public void setState(AssistantState state) {
+		this.state = state;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public UUID getUserId() {
+		return userId;
+	}
+
+	public void setUserId(UUID userId) {
+		this.userId = userId;
+	}
+
+	public Set<Skills> getSkills() {
+		return skills;
+	}
+
+	public void setSkills(Set<Skills> skills) {
+		this.skills = skills;
+	}
+
+	public Set<AidType> getAidType() {
+		return aidType;
+	}
+
+	public void setAidType(Set<AidType> aidType) {
+		this.aidType = aidType;
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
 
 }
