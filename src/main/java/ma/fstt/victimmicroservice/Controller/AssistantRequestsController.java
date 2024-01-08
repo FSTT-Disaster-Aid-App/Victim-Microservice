@@ -1,8 +1,13 @@
 package ma.fstt.victimmicroservice.Controller;
 
+import ma.fstt.victimmicroservice.Repository.AidtypeRepo;
 import ma.fstt.victimmicroservice.Repository.AssistantRequestsrepo;
-
+import ma.fstt.victimmicroservice.Repository.Locationrepo;
+import ma.fstt.victimmicroservice.Repository.SkillsRepo;
+import ma.fstt.victimmicroservice.entities.AidType;
 import ma.fstt.victimmicroservice.entities.AssistantRequests;
+import ma.fstt.victimmicroservice.entities.Location;
+import ma.fstt.victimmicroservice.entities.Skills;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -20,11 +26,47 @@ public class AssistantRequestsController {
 	@Autowired
 	private AssistantRequestsrepo assistantrequestsrepo;
 
+	@Autowired
+	private SkillsRepo skillsRepository;
+
+	@Autowired
+	private AidtypeRepo aidTypeRepository;
+
+	@Autowired
+	private Locationrepo locationRepository;
+
 	@PostMapping
-	public ResponseEntity<Map<String, Object>> createAssistanceOffer(@RequestBody AssistantRequests assistanceOffer) {
+	public ResponseEntity<Map<String, Object>> createAssistantRequest(@RequestBody AssistantRequests request) {
 		try {
-			AssistantRequests savedAssistanceORequest = assistantrequestsrepo.save(assistanceOffer);
-			return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("data", savedAssistanceORequest));
+			// Convert the DTO (Data Transfer Object) to the entity
+			AssistantRequests assistantRequests = new AssistantRequests();
+			assistantRequests.setDescription(request.getDescription());
+			assistantRequests.setState(request.getState());
+			assistantRequests.setDate(request.getDate());
+			assistantRequests.setUserId(request.getUserId());
+
+			// Fetch Skills entities from the repository based on the provided IDs
+			Set<Skills> skills = new HashSet<>();
+			for (UUID skillId : request.getSkills()) {
+				skills.add(skillsRepository.findById(skillId).orElseThrow());
+			}
+			assistantRequests.setSkills(skills);
+
+			// Fetch AidType entities from the repository based on the provided IDs
+			Set<AidType> aidTypes = new HashSet<>();
+			for (UUID aidTypeId : request.getAidTypes()) {
+				aidTypes.add(aidTypeRepository.findById(aidTypeId).orElseThrow());
+			}
+			assistantRequests.setAidType(aidTypes);
+
+			// Fetch Location entity from the repository based on the provided ID
+			Location location = locationRepository.findById(request.getLocationId()).orElseThrow();
+			assistantRequests.setLocation(location);
+
+			// Save the AssistantRequests entity
+			AssistantRequests savedAssistantRequests = assistantRequestsRepository.save(assistantRequests);
+
+			return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("data", savedAssistantRequests));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(Map.of("error", "Error while processing the request"));
