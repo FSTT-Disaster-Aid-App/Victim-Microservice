@@ -15,8 +15,7 @@ pipeline {
 
     stage('Checkout Source') {
       steps {
-				sh 'git config --global core.compression 0'
-        git url: 'https://github.com/FSTT-Disaster-Aid-App/Victim-Microservice.git', branch: 'main'
+      checkout scmGit(branches: [[name: 'main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/FSTT-Disaster-Aid-App/Victim-Microservice.git']])
 				sh 'mvn clean package'
       }
     }
