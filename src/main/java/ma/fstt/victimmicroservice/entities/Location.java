@@ -22,7 +22,7 @@ public class Location {
 	private String Address;
 
 	@JsonBackReference
-	@OneToMany(mappedBy = "location")
+	@OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
 	private Set<AssistantRequests> assistanceRequests;
 
 	public UUID getId() {

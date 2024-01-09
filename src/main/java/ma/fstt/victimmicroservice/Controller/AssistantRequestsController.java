@@ -39,22 +39,19 @@ public class AssistantRequestsController {
 			Location location = assistanceOffer.getLocation();
 			locationrepo.save(location);
 
-			// Save the AssistantRequests entity
-			AssistantRequests savedAssistanceRequest = assistantrequestsrepo.save(assistanceOffer);
-
 			// Set the association in Skills and save
-			Set<Skills> skills = savedAssistanceRequest.getSkills();
+			Set<Skills> skills = assistanceOffer.getSkills();
 			skills.forEach(skill -> {
 				Set<AssistantRequests> assistanceRequestsSet = new HashSet<>();
-				assistanceRequestsSet.add(savedAssistanceRequest);
+				assistanceRequestsSet.add(assistanceOffer);
 				skill.setAssistancerequest(assistanceRequestsSet);
 			});
 
 			// Set the association in AidType and save
-			Set<AidType> aidTypes = savedAssistanceRequest.getAidType();
+			Set<AidType> aidTypes = assistanceOffer.getAidType();
 			aidTypes.forEach(aidType -> {
 				Set<AssistantRequests> assistanceRequestsSet = new HashSet<>();
-				assistanceRequestsSet.add(savedAssistanceRequest);
+				assistanceRequestsSet.add(assistanceOffer);
 				aidType.setAssistancerequest(assistanceRequestsSet);
 			});
 
@@ -64,6 +61,8 @@ public class AssistantRequestsController {
 			// Save all AidType entities
 			aidtyperepo.saveAll(aidTypes);
 
+			// Save the AssistantRequests entity
+			AssistantRequests savedAssistanceRequest = assistantrequestsrepo.save(assistanceOffer);
 			// Build the response map
 			Map<String, Object> responseMap = new HashMap<>();
 			responseMap.put("data", savedAssistanceRequest);
